@@ -98,51 +98,51 @@ if __name__ == '__main__':
     print(rdic)
     #print(dic)
 
-    # while(1):
-    #     answer_set = set()
-    #     search_word = input('Please input the word you want to search: ')
-    #     if 'or' in search_word or 'OR' in search_word:
-    #         Query =search_word.replace('or','',re.IGNORECASE)
-    #         Q_word_list = Query.split()
-    #         for word in Q_word_list:
-    #             if word in dic.keys():
-    #                 x=set(dic[word])
-    #                 answer_set =answer_set.union(x)  # set or
-    #         print(answer_set)
-    #
-    #     elif 'and' in search_word or 'AND' in search_word:
-    #         Query =search_word.replace('and','',re.IGNORECASE)
-    #
-    #         Q_word_list = Query.split()
-    #         i=0
-    #         for word in Q_word_list:
-    #             if word in dic.keys() and i==0:
-    #                 x=set(dic[word])
-    #                 answer_set=x
-    #                 i = i + 1
-    #             elif word in dic.keys() and i==1:
-    #                 x = set(dic[word])
-    #                 answer_set =answer_set.intersection(x)  # set or
-    #
-    #         print(answer_set)
-    #     elif 'not' in search_word or 'NOT' in search_word:
-    #         Query =search_word.replace('not','',re.IGNORECASE)
-    #
-    #         Q_word_list = Query.split()
-    #         i=0
-    #         for word in Q_word_list:
-    #             if word in dic.keys() and i==0:
-    #                 x=set(dic[word])
-    #                 answer_set=x
-    #                 i = i + 1
-    #             elif word in dic.keys() and i==1:
-    #                 x = set(dic[word])
-    #                 answer_set.difference_update(x)
-    #
-    #         print(answer_set)
-    #     else:
-    #         print(dic.get(search_word))
-    #
+    while(1):
+        answer_set = set()
+        search_word = input('Please input the word you want to search: ')
+        if 'or' in search_word or 'OR' in search_word:
+            Query =search_word.replace('or','',re.IGNORECASE)
+            Q_word_list = Query.split()
+            for word in Q_word_list:
+                if word in dic.keys():
+                    x=set(dic[word])
+                    answer_set =answer_set.union(x)  # set or
+            print(answer_set)
+
+        elif 'and' in search_word or 'AND' in search_word:
+            Query =search_word.replace('and','',re.IGNORECASE)
+
+            Q_word_list = Query.split()
+            i=0
+            for word in Q_word_list:
+                if word in dic.keys() and i==0:
+                    x=set(dic[word])
+                    answer_set=x
+                    i = i + 1
+                elif word in dic.keys() and i==1:
+                    x = set(dic[word])
+                    answer_set =answer_set.intersection(x)  # set or
+
+            print(answer_set)
+        elif 'not' in search_word or 'NOT' in search_word:
+            Query =search_word.replace('not','',re.IGNORECASE)
+
+            Q_word_list = Query.split()
+            i=0
+            for word in Q_word_list:
+                if word in dic.keys() and i==0:
+                    x=set(dic[word])
+                    answer_set=x
+                    i = i + 1
+                elif word in dic.keys() and i==1:
+                    x = set(dic[word])
+                    answer_set.difference_update(x)
+
+            print(answer_set)
+        else:
+            print(dic.get(search_word))
+
 
 # # 查询
 # while (1):
