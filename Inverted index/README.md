@@ -60,3 +60,10 @@ and  和 not 同时操作
 and  or 和 not 同时操作
 
 ![avatar](boolean4.png)
+
+
+## **改进**
+
+1. 增加了优先级操作，可以支持 A B C 三个单词之间的 and or not 的优先级操作，优先级关系为 not >  and > or
+
+2. 学习和实用了 textblob库，实用了 其中 words方法就进行分词
