@@ -1,4 +1,9 @@
 # Information Retrieval
-my homework of Information Retrieve
 
-实验1 实现 
+This is my experiment of Information Retrieve
+
+实验目录：
+
+实验一 实现 Inverted index  具体代码和实验报告在 Inverted index 文件中
+
+实验二 实现 Ranked Retrieval Model   具体内代码和实验报告在 Ranked Redtrieval Model 文件中
