@@ -1,9 +1,9 @@
 # Information Retrieval
-my homework of Information Retrieve
 
+This is my experiment of Information Retrieve
 
-在good.py文件实现了 inverted_index的功能
+实验目录：
 
-在good.py 实现 and or not 操作，但有一些问题，实现思路有一些问题 只能单单处理 and 或者 or 或者 not操作，不能三个操作同时处理
+实验一 实现 Inverted index  具体代码和实验报告在 Inverted index 文件中
 
-在index.py 解决 good.py的操作问题，实现了基本的 and or not操作的功能
+实验二 实现 Ranked Retrieval Model   具体内代码和实验报告在 Ranked Redtrieval Model 文件中
