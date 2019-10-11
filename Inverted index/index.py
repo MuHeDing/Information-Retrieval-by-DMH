@@ -1,6 +1,7 @@
 import re
 from textblob import TextBlob
 from textblob import Word
+from collections import defaultdict
 def token_stream(line):
 
     li=TextBlob(line).words.singularize()
@@ -77,12 +78,13 @@ def process(dic):
 
 def get_reverse_index(filepath):
     file = open(filepath, 'r')
-    lineNum = 0
     rdic_p = {}
+    count=0
     for content in file.readlines():
-        lineNum += 1
+        count=count+1
         d = eval(content) #变成字典
         word = d['text']
+        lineNum=d['tweetId']
         word=word.lower()
         if word == '':
             break
@@ -92,13 +94,23 @@ def get_reverse_index(filepath):
         cdic = combiner(mdic)
         #print(cdic)
         rdic_p.update(cdic) #把cdic的键值赋值给 rdic_p
-
+    #print(count) #30548
     rdic = reducer(rdic_p)
 
     sdic = shuffle(rdic)
     return dict(sdic)
 
-
+def do_rankSearch(terms,postings):
+    Answer = defaultdict(dict)
+    for item in terms:
+        if item in postings:
+            for tweetid in postings[item]:
+                if tweetid in Answer:
+                    Answer[tweetid]+=1
+                else:
+                    Answer[tweetid] = 1
+    Answer = sorted(Answer.items(),key = lambda asd:asd[1],reverse=True)
+    return Answer
 
 
 if __name__ == '__main__':
@@ -117,44 +129,53 @@ if __name__ == '__main__':
         if len(word_list)==5:
             # A and B or C
             if (word_list[1] == "and") and (word_list[3] == "or"):
-                answer_set=dict[word_list[0]]
-                answer_set.intersection_update(dict[word_list[2]])
-                answer_set=answer_set.union(dict[word_list[4]])
+                answer_set=set(dic[word_list[0]])
+                answer_set.intersection_update(set(dic[word_list[2]]))
+                answer_set=answer_set.union(set(dic[word_list[4]]))
             # A - B or C
             elif (word_list[1] == "not") and (word_list[3] == "or"):
-                answer_set=dict[word_list[0]]
-                answer_set.difference_update(dict[word_list[2]])
-                answer_set=answer_set.union(dict[word_list[4]])
+                answer_set=set(dic[word_list[0]])
+                answer_set.difference_update(set(dic[word_list[2]]))
+                answer_set=answer_set.union(set(dic[word_list[4]]))
             # A or B and C
             elif (word_list[1] == "or") and (word_list[3] == "and"):
-                answer_set = dict[word_list[2]]
-                answer_set.intersection_update(dict[word_list[4]])
-                answer_set = answer_set.union(dict[word_list[0]])
+                answer_set = set(dic[word_list[2]])
+                answer_set.intersection_update(set(dic[word_list[4]]))
+                answer_set = answer_set.union(set(dic[word_list[0]]))
             # A or B - C
             elif (word_list[1] == "or") and (word_list[3] == "not"):
-                answer_set = dict[word_list[2]]
-                answer_set.difference_update(dict[word_list[4]])
-                answer_set = answer_set.union(dict[word_list[0]])
-        for i,word in enumerate(word_list):
-            if word in dic.keys() and i==0:
-                answer_set=set(dic[word])
-            elif i%2==1 and i!=len(word_list)-1:
-                if word=='and':
-                    if word_list[i+1] in dic.keys():
-                        x=set(dic[word_list[i+1]])
-                        answer_set.intersection_update(x)
-                if word=='or':
-                    if word_list[i+1] in dic.keys():
-                        x=set(dic[word_list[i+1]])
-                        answer_set=answer_set.union(x)
+                answer_set = set(dic[word_list[2]])
+                answer_set.difference_update(set(dic[word_list[4]]))
+                answer_set = answer_set.union(set(dic[word_list[0]]))
+            print(answer_set)
+        else:
+            for i,word in enumerate(word_list):
+                if word in dic.keys() and i==0:
+                    answer_set=set(dic[word])
+                elif i%2==1 and i!=len(word_list)-1:
+                    if word=='and':
+                        if word_list[i+1] in dic.keys():
+                            x=set(dic[word_list[i+1]])
+                            answer_set.intersection_update(x)
+                    if word=='or':
+                        if word_list[i+1] in dic.keys():
+                            x=set(dic[word_list[i+1]])
+                            answer_set=answer_set.union(x)
 
-                if word=='not':
-                    if word_list[i + 1] in dic.keys():
-                        x = set(dic[word_list[i + 1]])
-                        answer_set.difference_update(x)
-        print(answer_set)
+                    if word=='not':
+                        if word_list[i + 1] in dic.keys():
+                            x = set(dic[word_list[i + 1]])
+                            answer_set.difference_update(x)
+            print(answer_set)
 
 
+
+       # else:
+        #         #     leng = len(word_list)
+        #         #     answer = do_rankSearch(word_list,dic)
+        #         #     print("[Rank_Score: Tweetid]")
+        #         #     for (tweetid, score) in answer:
+        #         #         print(str(score / leng) + ": " + tweetid)
 
         # if 'or' in search_word or 'OR' in search_word:
         #     Query =search_word.replace('or','',re.IGNORECASE)
