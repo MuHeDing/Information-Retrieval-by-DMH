@@ -41,7 +41,8 @@ def reducer(dic):
             rdic[kk] = ll
         else:
             rdic[kk] = [ss]
-
+    for term in  rdic.keys():  # 对postings进行排序
+        rdic[term].sort()
     return rdic
 # 结合 词频
 def combiner(dic):
@@ -85,10 +86,9 @@ def get_reverse_index(filepath):
         d = eval(content) #变成字典
         word = d['text']
         lineNum=d['tweetId']
-        word=word.lower()
         if word == '':
             break
-        list = token_stream(word)
+        list = token_stream(word.lower())
         mdic = mapper(lineNum, list)
         #print(mdic)
         cdic = combiner(mdic)
@@ -114,7 +114,7 @@ def do_rankSearch(terms,postings):
 
 
 if __name__ == '__main__':
-    filepath="F:\\信息检索\\tweets.txt"
+    filepath="F:\\信息检索\\tweetsFor test.txt"
     rdic = get_reverse_index(filepath)
     #print(rdic)
     dic=process(rdic)
