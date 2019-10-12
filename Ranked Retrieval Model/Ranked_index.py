@@ -42,7 +42,8 @@ def reducer(dic):
             rdic[kk] = ll
         else:
             rdic[kk] = [ss]
-
+    for term in  rdic.keys():  # 对postings进行排序
+        rdic[term].sort()
     return rdic
 # 结合 词频,得到每篇文章的词频
 def combiner(dic):
@@ -105,9 +106,9 @@ def tfAnddf(dic):
         pdic[word]=[str(tf),str(df)]
     return pdic
 # 处理 query建立 词与词频的字典
-def procee_query(query):
+def process_query(query):
     dic={}
-    word=query.split()
+    word=token_stream(query.lower())
     for u in word:
         if u in dic.keys():
             dic[u]=dic[u]+1
@@ -115,49 +116,50 @@ def procee_query(query):
             dic[u]=1
     return dic
 
-def documentTF(query,dic,postings):
-    Answer={}
-    for word in query.keys():
-        if word in dic:
-            for u in dic[word]:  #找到对应的文档id
-                
-                if tweetid in Answer.keys():
-                    # ll=Answer[word]
-                    # ll.append(str(df))
-                    Answer[tweetid].append(df)
-                else:
-                    Answer[tweetid]=[df]
-    return Answer
-
-
-
-# def do_RankSearch(query,doc,postings):
-#     answer={}
-#     Sum=0
-#     tfq={}
-#     tfd={}
-#     idf={}
+# def documentTF(query,dic,postings):
+#     Answer={}
 #     for word in query.keys():
-#         if word in doc.keys():
-#             tfq[word] = 1 + math.log(query[word])
-#             idf[word] = math.log(30548 / doc[word][1])
-#             for u in postings[word]:
-#                 tweetid, df = u.split(':')
-#                 if tweetid in tfd.keys():
-#                     tfd[tweetid] += df
+#         if word in dic:
+#             for u in dic[word]:  #找到对应的文档id
+#
+#                 if tweetid in Answer.keys():
+#                     # ll=Answer[word]
+#                     # ll.append(str(df))
+#                     Answer[tweetid].append(df)
 #                 else:
-#                     tfd[tweetid] = df
-#     for word in query.keys():
-#
-#         tfd[word]=1+math.log(dic[word][0])  #在某一篇的文档
-#
-#
-#     for u in tfd:
-#         Sum=Sum+u**2
-#     Sum=math.sqrt(Sum)
-#
-#     for word in query.keys():
-#         answer[word]=
+#                     Answer[tweetid]=[df]
+#     return Answer
+
+# 可以加一个idf
+def do_RankSearch(query,doc,tdic):
+    score={}
+    length=defaultdict(int)
+    for term in query.keys():
+        ll=query[term]
+        ll=1+math.log(ll)  # query中的词频
+        if term in tdic.keys():  # 乘以 idf
+            df=int(tdic[term][1])
+            idf=math.log(30548/df)
+            ll=ll*idf
+        if term in doc.keys():
+            for postings in doc[term]:
+                tweetid,tf=postings.split(':')
+                tf=int(tf)
+                tf = 1 + math.log(tf)
+                if tweetid  in score.keys():
+                    score[tweetid]=score[tweetid]+ll*tf
+                    length[tweetid]=length[tweetid]+1
+                else:
+                    score[tweetid]=ll*tf
+                    length[tweetid]=1
+    for term in query.keys():
+        if term in doc.keys():
+            for postings in doc[term]:
+                tweetid,tf=postings.split(':')
+                score[tweetid]=score[tweetid]/length[tweetid]
+    return score
+
+
 
 def get_reverse_index(filepath):
     file = open(filepath, 'r')
@@ -179,7 +181,7 @@ def get_reverse_index(filepath):
     rdic = reducer(rdic_p)
 
     sdic = shuffle(rdic)
-    return rdic_p,dict(sdic)
+    return dict(sdic) # 第一个参数为还没合并的
 
 def do_rankSearch(terms,postings):
     Answer = defaultdict(dict)
@@ -195,16 +197,28 @@ def do_rankSearch(terms,postings):
 
 
 if __name__ == '__main__':
+
+    #  you are a good boy but Bachmann To Give Her Own State Of you Environmental groups in China are criticizing come on boy
+
     filepath="F:\\信息检索\\tweets.txt"
-    rdic,sdic= get_reverse_index(filepath)
-    dic=doctoword(rdic)
-    print(dic)
-    # search_word = ' '
-    # while(search_word!='q'):
-    #     search_word = input('Please input the word you want to search (all lower):  ')
-    #     dic=procee_query(search_word)
-    #     doc = documentTF(dic, rdic)
-    #     print(doc)
+    dic= get_reverse_index(filepath)
+    tf_dic = tfAnddf(dic)
+    search_word = ' '
+    k=10
+    while(search_word!='q'):
+        search_word = input('Please input the word you want to search (all lower):  ')
+        query=process_query(search_word)
+
+        score = do_RankSearch(query, dic,tf_dic)
+        score=dict(sorted(score.items(), key=lambda x: x[1],reverse=True))
+        answer = {}
+        for i,(key, value) in enumerate(score.items()):
+            print(key,' : ',value)
+            answer[key] = value
+            if i == k:
+                break
+
+
     # search_word=' '
     # while(search_word!='q'):
     #     answer_set = set()
@@ -237,3 +251,4 @@ if __name__ == '__main__':
     #         print(str(score / leng) + ": " + tweetid)
 
 
+# you are a good boy
