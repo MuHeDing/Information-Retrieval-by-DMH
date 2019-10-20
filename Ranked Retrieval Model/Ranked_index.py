@@ -3,18 +3,26 @@ from textblob import TextBlob
 from textblob import Word
 from collections import defaultdict
 import math
-def token_stream(line):
 
+test = {}
+
+def token_stream(line):
+    #先变小写，然后名词变成单数
+    line=line.lower()
     li=TextBlob(line).words.singularize()
-    li = ' '.join(li)  # 字符串
-    terms = re.findall(r'\w+',li, re.I)
+    li = ' '.join(li)  # 列表变成 字符串
+    terms = re.findall(r'\w+',li, re.I) # 只匹配字符和数字
     result = []
     for word in terms:
         expected_str = Word(word)
         expected_str = expected_str.lemmatize("v")  # 将动词还原
         result.append(expected_str)
     return  result
-
+# def token_stream(line):
+#     #先变小写，然后名词变成单数
+#     line=line.lower()
+#     terms = re.findall(r'\w+',line, re.I) # 只匹配字符和数字
+#     return  terms
 # 匹配
 def mapper(lineNum, list):
     # dic key为 lineNum:term value为 词频
@@ -104,11 +112,13 @@ def tfAnddf(dic):
             tf=tf+int(y)  #统计词频
             df=df+1       #统计文档频率
         pdic[word]=[str(tf),str(df)]
+    #print(pdic)
     return pdic
 # 处理 query建立 词与词频的字典
 def process_query(query):
     dic={}
     word=token_stream(query.lower())
+    #print(word)
     for u in word:
         if u in dic.keys():
             dic[u]=dic[u]+1
@@ -116,47 +126,36 @@ def process_query(query):
             dic[u]=1
     return dic
 
-# def documentTF(query,dic,postings):
-#     Answer={}
-#     for word in query.keys():
-#         if word in dic:
-#             for u in dic[word]:  #找到对应的文档id
-#
-#                 if tweetid in Answer.keys():
-#                     # ll=Answer[word]
-#                     # ll.append(str(df))
-#                     Answer[tweetid].append(df)
-#                 else:
-#                     Answer[tweetid]=[df]
-#     return Answer
 
-# 可以加一个idf
 def do_RankSearch(query,doc,tdic):
     score={}
-    length=defaultdict(int)
+    length={}
     for term in query.keys():
         ll=query[term]
         ll=1+math.log(ll)  # query中的词频
+        #print('ll: ',ll)
         if term in tdic.keys():  # 乘以 idf
-            df=int(tdic[term][1])
-            idf=math.log(30548/df)
-            ll=ll*idf
+           df=int(tdic[term][1])
+         #  print('df: ',df)
+           idf=math.log(30548/df)
+           ll=ll*idf
+         #  print('ll2: ',ll)
         if term in doc.keys():
             for postings in doc[term]:
                 tweetid,tf=postings.split(':')
                 tf=int(tf)
                 tf = 1 + math.log(tf)
+               # print('tf: ',tf)
                 if tweetid  in score.keys():
                     score[tweetid]=score[tweetid]+ll*tf
-                    length[tweetid]=length[tweetid]+1
+                    length[tweetid]=length[tweetid]+tf**2
                 else:
                     score[tweetid]=ll*tf
-                    length[tweetid]=1
-    for term in query.keys():
-        if term in doc.keys():
-            for postings in doc[term]:
-                tweetid,tf=postings.split(':')
-                score[tweetid]=score[tweetid]/length[tweetid]
+                    length[tweetid]=tf**2
+    for tweetid in score.keys():
+       score[tweetid]=score[tweetid]/math.sqrt(length[tweetid])
+
+
     return score
 
 
@@ -164,13 +163,14 @@ def do_RankSearch(query,doc,tdic):
 def get_reverse_index(filepath):
     file = open(filepath, 'r')
     rdic_p = {}
+
     for content in file.readlines():
         d = eval(content) #变成字典
         word = d['text']
         lineNum=d['tweetId']
-        word=word.lower()
         if word == '':
             break
+        test[lineNum] = word
         list = token_stream(word)
         mdic = mapper(lineNum, list)
         #print(mdic)
@@ -194,18 +194,76 @@ def do_rankSearch(terms,postings):
                     Answer[tweetid] = 1
     Answer = sorted(Answer.items(),key = lambda asd:asd[1],reverse=True)
     return Answer
-
+def old_do_rankSearch(terms,postings):
+    Answer = defaultdict(dict)
+    for item in terms:
+        if item in postings:
+            for tweetid in postings[item]:
+                if tweetid in Answer:
+                    Answer[tweetid]+=1
+                else:
+                    Answer[tweetid] = 1
+    Answer = sorted(Answer.items(),key = lambda asd:asd[1],reverse=True)
+    #print("[Rank_Score: Tweetid]")
+    return dict(Answer)
 
 if __name__ == '__main__':
 
     #  you are a good boy but Bachmann To Give Her Own State Of you Environmental groups in China are criticizing come on boy
-
+    k = 10
     filepath="F:\\信息检索\\tweets.txt"
     dic= get_reverse_index(filepath)
     tf_dic = tfAnddf(dic)
-    search_word = ' '
-    k=10
-    while(search_word!='q'):
+    # search_word = input('Please input the word you want to search (all lower):  ')
+    # query = process_query(search_word)
+    # score = do_RankSearch(query, dic, tf_dic)
+    # score=dict(sorted(score.items(), key=lambda x: x[1],reverse=True))
+    # answer = {}
+    # for i, key in enumerate(score.keys()):
+    #     text=test[key]
+    #     print(text)
+    #     if i ==k:
+    #         break
+   # search_word = ' '
+
+    # while(1):
+    #     query=input('Please input the word you want to search (all lower):  ')
+    #     query = process_query(query)
+    #     x = process(dic)
+    #     score=old_do_rankSearch(query,x)
+    #     #score = dict(sorted(score.items(), key=lambda x: x[1], reverse=True))
+    #     for i, key in enumerate(score.keys()):
+    #         text=test[key]
+    #         print(text)
+    #         if i ==k:
+    #             break
+
+    #读取query文件，返回结果
+    # with open('F:\\信息检索\\evaluation\\fenci_result.txt', 'w', encoding='utf-8') as f_out:
+    #     with open('F:\\信息检索\\evaluation\\MB171-225.txt', 'r', encoding='utf-8') as file:
+    #         lis = []
+    #         for line in file.readlines():
+    #             if line.find('<query>') != -1:
+    #                 # line=line.replace('<query>|</query>','')
+    #                 # line=line.replace('</query>','')
+    #                 line = re.sub('<query>|</query>', '', line)
+    #                 line = line.strip()
+    #                 lis.append(line)
+    #     id=171
+    #     for query in lis:
+    #         query = process_query(query)
+    #         score=do_RankSearch(query,dic,tf_dic)
+    #         #x=process(dic)
+    #         #score=old_do_rankSearch(query,x)
+    #         score = dict(sorted(score.items(), key=lambda x: x[1], reverse=True))
+    #         for i, key in enumerate(score.keys()):
+    #             text=str(id)+' '+key
+    #             f_out.write(text+'\n')
+    #             if i ==k:
+    #                 break
+    #         id=id+1
+
+    while(1):
         search_word = input('Please input the word you want to search (all lower):  ')
         query=process_query(search_word)
 
@@ -217,38 +275,3 @@ if __name__ == '__main__':
             answer[key] = value
             if i == k:
                 break
-
-
-    # search_word=' '
-    # while(search_word!='q'):
-    #     answer_set = set()
-    #     search_word = input('Please input the word you want to search (all lower):  ')
-    #     search_word=search_word.lower()
-    #     word_list=search_word.split()
-    #     for i, word in enumerate(word_list):
-    #         if word in dic.keys() and i == 0:
-    #             answer_set = set(dic[word])
-    #         elif i % 2 == 1 and i != len(word_list) - 1:
-    #             if word == 'and':
-    #                 if word_list[i + 1] in dic.keys():
-    #                     x = set(dic[word_list[i + 1]])
-    #                     answer_set.intersection_update(x)
-    #             if word == 'or':
-    #                 if word_list[i + 1] in dic.keys():
-    #                     x = set(dic[word_list[i + 1]])
-    #                     answer_set = answer_set.union(x)
-    #
-    #             if word == 'not':
-    #                 if word_list[i + 1] in dic.keys():
-    #                     x = set(dic[word_list[i + 1]])
-    #                     answer_set.difference_update(x)
-    #     print(answer_set)
-    #
-    #     leng = len(word_list)
-    #     answer = do_rankSearch(word_list,dic)
-    #     print("[Rank_Score: Tweetid]")
-    #     for (tweetid, score) in answer:
-    #         print(str(score / leng) + ": " + tweetid)
-
-
-# you are a good boy
