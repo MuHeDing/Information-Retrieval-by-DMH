@@ -1,6 +1,5 @@
-# Information Retrieval—experiment 1
+# Information Retrieval—Inverted index and Boolean Retrieval Model
 
-## Inverted index and Boolean Retrieval Model
 
 ## **实验内容**
 

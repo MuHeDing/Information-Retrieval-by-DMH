@@ -47,9 +47,48 @@ def mapper(lineNum, list):
 
 三、 开始结合词频，combiner 因为之前的出来的词频没有求和，现在是对每行词频进行求和，得到每行对应词频，开始将每个term对应的posting list进行合并，reducer，将之前的 字典 key为 lineNum:term, value为 [词频]，变为 key：term，value：[lineNum:词频]，和实验一操作一样，然后再实现排序，按term的首字母大小进行排序，从而建立起倒排索引，其中每一个term对应了 tweetid和在这一篇 tweetid中出现的词频, 与实验一处理类似
 
+```py
+# 结合 词频,得到每篇文章的词频
+def combiner(dic):
+    keys = dic.keys()
+    tdic = {}
+    for key in keys:
+       # print(key)
+        valuelist = dic.get(key) #得到记录 posting list
+        count = 0
+        for i in valuelist:
+            count += i
+        tdic[key] = count
+    return tdic
 
 
+#将每个 term对应的 posting进行合并
+def reducer(dic):
+    keys = dic.keys()
+    rdic = {}
+    for key in keys:
+        lineNum, kk = key.split(":")
+        ss = ''.join([lineNum, ':', str(dic.get(key))]) #变成字符串
+        if kk in rdic.keys():
+            ll = rdic[kk]
+            ll.append(ss)
+            rdic[kk] = ll
+        else:
+            rdic[kk] = [ss]
+    for term in  rdic.keys():  # 对postings进行排序
+        rdic[term].sort()
+    return rdic
+
+#排序，返回一个列表
+def shuffle(dic):
+    dict = sorted(dic.items(), key=lambda x: x[0])
+    return dict
+
+```
+<br>
 在posting list中存储term在每个doc中的TF with pairs (docID, tf),每个词对应了 它出现的文档序号和在该文档下的词频
+
+<br>
 
 结果如下图所示：
 
