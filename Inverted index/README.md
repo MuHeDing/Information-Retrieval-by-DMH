@@ -115,13 +115,12 @@ def shuffle(dic):
 
 每个词对应了 它出现的文档（此时用行号作为文档）和在该文档下的词频
 
-![index.png](https://i.loli.net/2019/10/20/xH3yQz98OnDhFpN.png)
 
-
+![avatar](index.png)
 用 tweetid 作为 文档id，并且把词频给去掉，实现标准输出
 
-![boolean5.png](https://i.loli.net/2019/10/20/my3FOtflJMTYug7.png)
-
+ 
+![avatar](boolean5.png)
 
 ## **实现思路——布尔查询**
 
@@ -135,28 +134,28 @@ def shuffle(dic):
 
 and  和 not 单独操作
 
-![boolean1.png](https://i.loli.net/2019/10/20/C52wX7hzxiBSReI.png)
 
+
+![avatar](boolean1.png)
 
 and  和 not 同时操作
 
 
-![boolean2.png](https://i.loli.net/2019/10/20/wmiWQMtyLVedf16.png)
+![avatar](boolean2.png)
 
 
 and  or 和 not 同时操作
-
-![boolean4.png](https://i.loli.net/2019/10/20/K2Jz6fQLWrNcsCT.png)
+![avatar](boolean4.png)
 
 
 ## **改进**
 
 1. 增加了优先级操作，可以支持 A B C 三个单词之间的 and or not 的优先级操作，优先级关系为 not >  and > or
 
-![boolean6.png](https://i.loli.net/2019/10/20/oUz3uvSZlyiQJ8F.png)
+![avatar](boolean6.png)
 
 2. 学习和实用了 textblob库，实用了 其中 words方法就进行分词，还有对名词的单复数处理，对动词进行词性还原，学习实用的方法图片如下图所示：
 
-![learn.png](https://i.loli.net/2019/10/20/3mIyoKnO49EqVLj.png)
+![avatar](learn.png)
 
 3. 加入了统计词频（tf）和统计词的文档（df），便于实验2计算 文档和查询的分数

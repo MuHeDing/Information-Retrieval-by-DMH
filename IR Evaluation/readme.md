@@ -12,7 +12,8 @@
 一、 对实验二查询结果进行评价，首先提取查询内容，在MB171-225.txt中有查询内容，查询内容为标签<query></query>中的内容，如图所示：
 <br>
 
-![3-evaluation1.png](https://i.loli.net/2019/10/20/LBrbTx52g3oMZHO.png)
+
+![avatar](3-evaluation1.png)
 
 <br>
 
@@ -49,7 +50,7 @@
 
 <br>
 
-![3-evaluation2.png](https://i.loli.net/2019/10/20/i89W2LoJ5sVckIP.png)
+![avatar](3-evaluation2.png)
 
 
 三、编写评价函数，MAP,MRR,NDCG
@@ -58,7 +59,7 @@ MAP，先得到qrels.txt 即标准答案的输出结果的 tweetid(docid)，再�
 
 <br>
 
-![3-evaluation3.png](https://i.loli.net/2019/10/20/ezcV8qgBDGEiyuo.png)
+![avatar](3-evaluation3.png)
 
 
 代码如下：
@@ -105,7 +106,7 @@ def MAP_eval(qrels_dict, test_dict, k = 100):
 MRR，和MAP 步骤类似，使用倒数的方法，先得到qrels.txt 即标准答案的输出结果的 tweetid(docid)，再得到你的结果的 tweetid(docid),使用下图的公式，分子为一，分母为相关文档的位置，得到RR ，最后再对所有RR 求和
 
 
-![3-evaluation4.png](https://i.loli.net/2019/10/20/dUpigE2qIeHYJhs.png)
+![avatar](3-evaluation4.png)
 
 代码如下：
 
@@ -148,7 +149,7 @@ def MRR_eval(qrels_dict, test_dict, k = 100):
 
 NDCG: 先算 DCG 为累计的相关性之和,再除以 位置的以2为底的对数 , 算 IDCG 为 将从大到小排序之后的 DCG，然后再用下图 公式 求出 NDCG
 
-![3-evaluation5.png](https://i.loli.net/2019/10/20/SEyGg43De9I1YMl.png)
+![avatar](3-evaluation5.png)
 
 代码如下：
 
@@ -201,13 +202,13 @@ def NDCG_eval(qrels_dict, test_dict, k = 100):
 
 <br>
 
-![3-evaluation6.png](https://i.loli.net/2019/10/20/KTdi5lgwZ9c6fpE.png)
+![avatar](3-evaluation6.png)
 
 最终求和之后：
 
 <br>
 
-![3-evaluation7.png](https://i.loli.net/2019/10/20/LRelKviBmSaPyfX.png)
+![avatar](3-evaluation7.png)
 
 结果比 标准答案小了一些，但基本上接近，实现的查询是有效的
 

@@ -21,7 +21,7 @@ normalization
 
 一、 首先在实验一建立倒排索引的基础上，进行处理，建立了每一个term对应的 postings的结果，结果如实验一所示：
 
-![2-rank1.png](https://i.loli.net/2019/10/20/ftVX7Jc9Ciz6Spd.png)
+![avatar](2-rank1.png)
 
 
 
@@ -92,7 +92,8 @@ def shuffle(dic):
 
 结果如下图所示：
 
-![2-rank2.png](https://i.loli.net/2019/10/20/5AJKknVL9t8jwCI.png)
+
+![avatar](2-rank2.png)
 
 四、统计词出现的总词频和文档频率，也就是对 term来计算 包含的 tweetid数目即 文档频率，每个tweetid中出现的词频求和，即总词频
 
@@ -133,7 +134,7 @@ def process_query(query):
 
 使用如图所示的算法：
 
-![2-rank3.png](https://i.loli.net/2019/10/20/MAT8O6gKHv7cq4l.png)
+![avatar](2-rank3.png)
 
 
 
@@ -177,13 +178,12 @@ def do_RankSearch(query,doc,tdic):
 
 以上是结果图，输入一个query，我会出现相应的分数
 
-![2-rank5.png](https://i.loli.net/2019/10/20/YmgPX2UEhiaCQ4y.png)
+![avatar](2-rank5.png)
 
 
 为了比较结果，我专门把相应的text也输出，可以看到里面有 query中的单词
 
-
-![2-rank4.png](https://i.loli.net/2019/10/20/lkZz1wU4RIGxJKS.png)
+![avatar](2-rank4.png)
 
 
 
