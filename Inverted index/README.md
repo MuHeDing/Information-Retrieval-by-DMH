@@ -4,8 +4,6 @@
 ## **实验内容**
 
 1. 使用数据集30548条tweets，读取其中的text中的数据，来创建 inverted index
-<br>
-<br>
 2. 实现 Boolean Retrieval Model：
     - Input：a query (like Ron Weasley birthday)
     - Output: print a list of top k relevant tweets.
@@ -14,7 +12,6 @@
 ## **实现思路——倒排索引**
 
 1.读取tweets中的text中的数据,进行数据的预处理，主要是采用**正则表达式**进行分词和对一些符号进行处理，只保存得到字母和数字
-<br>
 
 ```py
 def token_stream(line):
@@ -115,11 +112,10 @@ def shuffle(dic):
 
 每个词对应了 它出现的文档（此时用行号作为文档）和在该文档下的词频
 
-
 ![avatar](index.png)
 用 tweetid 作为 文档id，并且把词频给去掉，实现标准输出
 
- 
+
 ![avatar](boolean5.png)
 
 ## **实现思路——布尔查询**
@@ -156,6 +152,6 @@ and  or 和 not 同时操作
 
 2. 学习和实用了 textblob库，实用了 其中 words方法就进行分词，还有对名词的单复数处理，对动词进行词性还原，学习实用的方法图片如下图所示：
 
-![avatar](learn.png)
+<img src="learn.png" alt="avatar" style="zoom:50%;" />
 
 3. 加入了统计词频（tf）和统计词的文档（df），便于实验2计算 文档和查询的分数
